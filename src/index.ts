@@ -74,13 +74,16 @@ export const i18next = (userOptions: Partial<I18NextPluginOptions>) => {
   const _instance = options.instance || lib
 
   return new Elysia({ name: 'elysia-i18next', seed: userOptions })
-    .derive(async () => {
+    .derive(
+      { as: 'global' }
+      async () => {
       if (!_instance.isInitialized) {
         await _instance.init(options.initOptions || {})
       }
       return { i18n: _instance, t: _instance.t }
     })
     .onBeforeHandle(async ctx => {
+      { as: 'global' }
       const lng = await options.detectLanguage(ctx)
       if (lng) {
         await _instance.changeLanguage(lng)
